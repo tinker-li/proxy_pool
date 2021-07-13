@@ -13,16 +13,14 @@
 __author__ = 'JHao'
 
 import click
-
-from setting import BANNER
-from helper.scheduler import runScheduler
-from api.proxyApi import runFlask
+from helper.launcher import startServer, startScheduler
+from setting import BANNER, VERSION
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)
-@click.version_option(version='2.1.0')
+@click.version_option(version=VERSION)
 def cli():
     """ProxyPool cli工具"""
 
@@ -31,14 +29,14 @@ def cli():
 def schedule():
     """ 启动调度程序 """
     click.echo(BANNER)
-    runScheduler()
+    startScheduler()
 
 
 @cli.command(name="server")
 def server():
     """ 启动api服务 """
     click.echo(BANNER)
-    runFlask()
+    startServer()
 
 
 if __name__ == '__main__':

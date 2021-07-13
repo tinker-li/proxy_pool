@@ -19,13 +19,16 @@ ProxyPool 爬虫代理IP池
 
 ### ProxyPool
 
-* 文档: [document](https://proxy-pool.readthedocs.io/zh/2.1.0/) [![Documentation Status](https://readthedocs.org/projects/proxy-pool/badge/?version=latest)](https://proxy-pool.readthedocs.io/zh/latest/?badge=latest)
+爬虫代理IP池项目,主要功能为定时采集网上发布的免费代理验证入库，定时验证入库的代理保证代理的可用性，提供API和CLI两种使用方式。同时你也可以扩展代理源以增加代理池IP的质量和数量。
+
+* 文档: [document](https://proxy-pool.readthedocs.io/zh/latest/) [![Documentation Status](https://readthedocs.org/projects/proxy-pool/badge/?version=latest)](https://proxy-pool.readthedocs.io/zh/latest/?badge=latest)
 
 * 支持版本: ![](https://img.shields.io/badge/Python-2.x-green.svg) ![](https://img.shields.io/badge/Python-3.x-blue.svg)
 
-* 测试地址: http://118.24.52.95 (单机勿压)
+* 测试地址: http://demo.spiderpy.cn (勿压谢谢)
 
-* 有时间的朋友帮忙点下末尾的[推广](https://tracking.gitads.io/?repo=proxy_pool)哦 :stuck_out_tongue_winking_eye:
+* 付费代理推荐: [luminati-china](https://brightdata.grsm.io/proxyPool). 国外的亮数据BrightData（以前叫luminati）被认为是代理市场领导者，覆盖全球的7200万IP，大部分是真人住宅IP，成功率扛扛的。付费套餐多种，100刀的也有，需要高质量代理ip的可以注册后联系中文客服，开通后有5美金赠送和教程指引。.
+
 
 ### 运行项目
 
@@ -63,7 +66,7 @@ PORT = 5000                    # 监听端口
 
 # 配置数据库
 
-DB_CONN = 'redis://@127.0.0.1:8888'
+DB_CONN = 'redis://:pwd@127.0.0.1:8888/0'
 
 
 # 配置 ProxyFetcher
@@ -94,7 +97,7 @@ python proxyPool.py server
 ```bash
 docker pull jhao104/proxy_pool
 
-docker run --env DB_CONN=redis://:password@ip:port/db -p 5010:5010 jhao104/proxy_pool:2.1.0
+docker run --env DB_CONN=redis://:password@ip:port/db -p 5010:5010 jhao104/proxy_pool:latest
 ```
 
 
@@ -102,13 +105,17 @@ docker run --env DB_CONN=redis://:password@ip:port/db -p 5010:5010 jhao104/proxy
 
 * Api
 
-| api | method | Description | arg|
+启动web服务后, 默认配置下会开启 http://127.0.0.1:5010 的api接口服务:
+
+| api | method | Description | params|
 | ----| ---- | ---- | ----|
 | / | GET | api介绍 | None |
-| /get | GET | 随机获取一个代理 | None|
-| /get_all | GET | 获取所有代理 |None|
-| /get_status | GET | 查看代理数量 |None|
-| /delete | GET | 删除代理  |proxy=host:ip|
+| /get | GET | 随机获取一个代理| 可选参数: `?type=https` 过滤支持https的代理|
+| /pop | GET | 获取并删除一个代理| 可选参数: `?type=https` 过滤支持https的代理|
+| /all | GET | 获取所有代理 |可选参数: `?type=https` 过滤支持https的代理|
+| /count | GET | 查看代理数量 |None|
+| /delete | GET | 删除代理  |`?proxy=host:ip`|
+
 
 * 爬虫使用
 
@@ -187,20 +194,20 @@ PROXY_FETCHER = [
 
    目前实现的采集免费代理网站有(排名不分先后, 下面仅是对其发布的免费代理情况, 付费代理测评可以参考[这里](https://zhuanlan.zhihu.com/p/33576641)): 
    
-  | 厂商名称 |  状态  |  更新速度 |  可用率  |  是否被墙  |  地址 |
-  | -----   |  ---- | --------  | ------ | --------- | ----- |
-  | 无忧代理 |  可用  | 几分钟一次 |   *     |  否       | [地址](http://www.data5u.com/free/index.html) |
-  | 66代理   | 可用  | 更新很慢   |   *     |  否      | [地址](http://www.66ip.cn/) |
-  | 西刺代理 | 可用   | 几分钟一次 |   *     | 否       | [地址](http://www.xicidaili.com)|
-  | 全网代理 |  可用  | 几分钟一次 |   *     |  否      | [地址](http://www.goubanjia.com/)|
-  | ~~训代理~~ |  已关闭免费代理  | * |   *     |  否      | [地址](http://www.xdaili.cn/)|
-  | 快代理 |  可用  |几分钟一次|   *     |  否      | [地址](https://www.kuaidaili.com/)|
-  | 云代理 |  可用  |几分钟一次|   *     |  否      | [地址](http://www.ip3366.net/)|
-  | IP海 |  可用  |几小时一次|   *     |  否      | [地址](http://www.iphai.com/)|
-  | 免费IP代理库 |  可用  |快|   *     |  否      | [地址](http://ip.jiangxianli.com/)|
-  | 中国IP地址 |  可用  |几分钟一次|   *     |  是      | [地址](http://cn-proxy.com/)|
-  | Proxy List |  可用  |几分钟一次|   *     |  是      | [地址](https://proxy-list.org/chinese/index.php)|
-  | ProxyList+ |  可用  |几分钟一次|   *     |  是      | [地址](https://list.proxylistplus.com/Fresh-HTTP-Proxy-List-1)|
+  |   代理名称   |  状态  |  更新速度 |  可用率  |  地址 |    代码   |
+  | ---------   |  ---- | --------  | ------  | ----- |   ------- |
+  | 米扑代理     |  ✔    |     ★     |   *     | [地址](https://proxy.mimvp.com/)   | `freeProxy01`  |
+  | 66代理      |   ✔   |     ★★     |   *    | [地址](http://www.66ip.cn/)         |  `freeProxy02` |
+  | Pzzqz       |  ✔    |     ★     |   *     | [地址](https://pzzqz.com/)          | `freeProxy03`  |
+  | 神鸡代理     |  ✔    |    ★★★    |   *     | [地址](http://www.shenjidaili.com/) | `freeProxy04`  |
+  | 快代理       |  ✔    |     ☆     |   *     | [地址](https://www.kuaidaili.com/)  | `freeProxy05`  |
+  | 极速代理     |  ✔    |    ★★★    |   *     | [地址](https://proxy.coderbusy.com/)| `freeProxy06`  |
+  | 云代理       |  ✔    |     ★     |   *     | [地址](http://www.ip3366.net/)      |  `freeProxy07` |
+  | 小幻代理     |  ✔    |     ★★    |    *    | [地址](https://ip.ihuan.me/)        | `freeProxy08`   |
+  | 免费代理库   |  ✔    |      ☆    |    *    | [地址](http://ip.jiangxianli.com/)  |   `freeProxy09` |
+  | 89代理      |  ✔    |      ☆     |   *    | [地址](https://www.89ip.cn/)         | `freeProxy13` |
+  | 西拉代理    |  ✔     |     ★★    |   *     | [地址](http://www.xiladaili.com/)   | `freeProxy14` |
+
   
   如果还有其他好的免费代理网站, 可以在提交在[issues](https://github.com/jhao104/proxy_pool/issues/71), 下次更新时会考虑在项目中支持。
 
@@ -218,15 +225,9 @@ PROXY_FETCHER = [
 
 　　这里感谢以下contributor的无私奉献：
 
-　　[@kangnwh](https://github.com/kangnwh)| [@bobobo80](https://github.com/bobobo80)| [@halleywj](https://github.com/halleywj)| [@newlyedward](https://github.com/newlyedward)| [@wang-ye](https://github.com/wang-ye)| [@gladmo](https://github.com/gladmo)| [@bernieyangmh](https://github.com/bernieyangmh)| [@PythonYXY](https://github.com/PythonYXY)| [@zuijiawoniu](https://github.com/zuijiawoniu)| [@netAir](https://github.com/netAir)| [@scil](https://github.com/scil)| [@tangrela](https://github.com/tangrela)| [@highroom](https://github.com/highroom)| [@luocaodan](https://github.com/luocaodan)| [@vc5](https://github.com/vc5)| [@1again](https://github.com/1again)| [@obaiyan](https://github.com/obaiyan) [@zsbh](https://github.com/zsbh)
+　　[@kangnwh](https://github.com/kangnwh) | [@bobobo80](https://github.com/bobobo80) | [@halleywj](https://github.com/halleywj) | [@newlyedward](https://github.com/newlyedward) | [@wang-ye](https://github.com/wang-ye) | [@gladmo](https://github.com/gladmo) | [@bernieyangmh](https://github.com/bernieyangmh) | [@PythonYXY](https://github.com/PythonYXY) | [@zuijiawoniu](https://github.com/zuijiawoniu) | [@netAir](https://github.com/netAir) | [@scil](https://github.com/scil) | [@tangrela](https://github.com/tangrela) | [@highroom](https://github.com/highroom) | [@luocaodan](https://github.com/luocaodan) | [@vc5](https://github.com/vc5) | [@1again](https://github.com/1again) | [@obaiyan](https://github.com/obaiyan) | [@zsbh](https://github.com/zsbh) | [@jiannanya](https://github.com/jiannanya)
 
 
 ### Release Notes
 
    [changelog](https://github.com/jhao104/proxy_pool/blob/master/docs/changelog.rst)
-
-### AD
-
-　　最后, 开源不易, 有时间的小伙伴可以点下[推广](https://tracking.gitads.io/?repo=proxy_pool)广告。
-
-　　[![AD](https://images.gitads.io/proxy_pool)](https://tracking.gitads.io/?repo=proxy_pool)

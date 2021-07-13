@@ -17,13 +17,13 @@ __author__ = 'JHao'
 import os
 import sys
 
-from util.six import urlparse
+from util.six import urlparse, withMetaclass
 from util.singleton import Singleton
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
-class DbClient(object):
+class DbClient(withMetaclass(Singleton)):
     """
     DbClient DB工厂类 提供get/put/update/pop/delete/exists/getAll/clean/getCount/changeTable方法
 
@@ -48,14 +48,11 @@ class DbClient(object):
 
     """
 
-    __metaclass__ = Singleton
-
     def __init__(self, db_conn):
         """
         init
         :return:
         """
-        self.db_conn = db_conn
         self.parseDbConn(db_conn)
         self.__initDbClient()
 
@@ -80,8 +77,6 @@ class DbClient(object):
             __type = "ssdbClient"
         elif "REDIS" == self.db_type:
             __type = "redisClient"
-        elif "MONGODB" == self.db_type:
-            __type = "mongodbClient"
         else:
             pass
         assert __type, 'type error, Not support DB type: {}'.format(self.db_type)
@@ -91,8 +86,8 @@ class DbClient(object):
                                                                                      password=self.db_pwd,
                                                                                      db=self.db_name)
 
-    def get(self, **kwargs):
-        return self.client.get(**kwargs)
+    def get(self, https, **kwargs):
+        return self.client.get(https, **kwargs)
 
     def put(self, key, **kwargs):
         return self.client.put(key, **kwargs)
@@ -106,11 +101,11 @@ class DbClient(object):
     def exists(self, key, **kwargs):
         return self.client.exists(key, **kwargs)
 
-    def pop(self, **kwargs):
-        return self.client.pop(**kwargs)
+    def pop(self, https, **kwargs):
+        return self.client.pop(https, **kwargs)
 
-    def getAll(self):
-        return self.client.getAll()
+    def getAll(self, https):
+        return self.client.getAll(https)
 
     def clear(self):
         return self.client.clear()
@@ -120,3 +115,6 @@ class DbClient(object):
 
     def getCount(self):
         return self.client.getCount()
+
+    def test(self):
+        return self.client.test()
